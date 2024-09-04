@@ -30,8 +30,8 @@ They provide a few environment variables to the program, and this package parses
 It notes what has been typed in the prompt, the cursor position where the user has
 pressed TAB, and returns relevant suggestions.
 
-By writing custom predictors, tools can hook into this and enrich the user's experience
-- using existing logic in your code without duplicating it to a shell script.
+By writing custom predictors, tools can hook into this and enrich the user's
+experience. Use existing logic in your code without duplicating it to a shell script.
 
 ## Installation
 

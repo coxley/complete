@@ -3,7 +3,7 @@
 This is a more realistic example.
 
 Imagine you have a command-line tool to perform service lookups. Some services are more
-"servic-like" than others, like gRPC, and accept connections. Others consume messages
+"service-like" than others, like gRPC, and accept connections. Others consume messages
 from a broker, such as Pub/Sub or Kafka.
 
 If a user wants to lookup properties of a service, not all fields will be relevant to
