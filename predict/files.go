@@ -24,11 +24,11 @@ func Files(pattern string) Predictor {
 	return files(pattern, true)
 }
 
-func files(pattern string, allowFiles bool) Func {
+func files(pattern string, allowFiles bool) Predictor {
 	// search for files according to arguments,
 	// if only one directory has matched the result, search recursively into
 	// this directory to give more results.
-	return func(a args.Args) (prediction []string) {
+	return Func(func(a args.Args) (prediction []string) {
 		prediction = predictFiles(a, pattern, allowFiles)
 
 		// if the number of prediction is not 1, we either have many results or
@@ -44,7 +44,7 @@ func files(pattern string, allowFiles bool) Func {
 
 		a.Last = prediction[0]
 		return predictFiles(a, pattern, allowFiles)
-	}
+	})
 }
 
 func predictFiles(a args.Args, pattern string, allowFiles bool) []string {
@@ -75,8 +75,8 @@ func directory(path string) string {
 }
 
 // FileSet predict according to file rules to a given set of file names
-func FileSet(files []string) Func {
-	return func(a args.Args) (prediction []string) {
+func FileSet(files []string) Predictor {
+	return Func(func(a args.Args) (prediction []string) {
 		// add all matching files to prediction
 		for _, f := range files {
 			f = fixPathForm(a.Last, f)
@@ -87,7 +87,7 @@ func FileSet(files []string) Func {
 			}
 		}
 		return
-	}
+	})
 }
 
 func listFiles(dir, pattern string, allowFiles bool) []string {
