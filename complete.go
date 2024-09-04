@@ -1,75 +1,138 @@
 package complete
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"os"
 	"strconv"
 	"strings"
 
-	"github.com/posener/complete/cmd"
+	"github.com/coxley/complete/args"
+	"github.com/coxley/complete/cmplog"
+	"github.com/coxley/complete/command"
+	"github.com/coxley/complete/internal/install"
 )
 
 const (
 	envLine  = "COMP_LINE"
 	envPoint = "COMP_POINT"
-	envDebug = "COMP_DEBUG"
 )
+
+var Log = cmplog.Log
 
 // Complete structs define completion for a command with CLI options
 type Complete struct {
 	Command Command
-	cmd.CLI
-	Out io.Writer
+	Out     io.Writer
+	Parser  args.Parser
+}
+
+// Commander returns a structured [Command]
+type Commander interface {
+	Command() command.Command
+}
+
+// CommandParser should generate a fully-structured [Command] and parse arguments into
+// an object that predictors can use.
+type CommandParser interface {
+	Commander
+	args.Parser
+}
+
+// NopParser returns a [CommandParser] that returns nil when parsing.
+func NopParser(command command.Command) CommandParser {
+	return &nopParser{command}
+}
+
+type nopParser struct {
+	command Command
+}
+
+func (nopParser) Parse([]string) any {
+	return nil
+}
+
+func (p *nopParser) Command() command.Command {
+	return p.command
 }
 
 // New creates a new complete command.
-// name is the name of command we want to auto complete.
-// IMPORTANT: it must be the same name - if the auto complete
-// completes the 'go' command, name must be equal to "go".
-// command is the struct of the command completion.
-func New(name string, command Command) *Complete {
+//
+// 'name' is unused, but is kept for backward-compatibility with posener/complete. It
+// used to be used for installation of the completion script, but we prefer using
+// os.Args[0] to allow the user to control what they name their binaries.
+func New(name string, command command.Command) *Complete {
 	return &Complete{
 		Command: command,
-		CLI:     cmd.CLI{Name: name},
 		Out:     os.Stdout,
 	}
 }
 
-// Run runs the completion and add installation flags beforehand.
-// The flags are added to the main flag CommandLine variable.
-func (c *Complete) Run() bool {
-	c.AddFlags(nil)
-	flag.Parse()
-	return c.Complete()
+// New2 returns a completer structured by the [CommandParser]
+//
+// By accepting an [args.Parser], predictors can gain extra insight to the command
+// at large to influence their suggestions. The result of [args.Parser.Parse] is stored in
+// [args.Args.ParsedRoot] before any predictors run.
+//
+// Suggestions are printed to [os.Stdout].
+func New2(cp CommandParser) *Complete {
+	return New2F(os.Stdout, cp)
 }
 
-// Complete a command from completion line in environment variable,
-// and print out the complete options.
-// returns success if the completion ran or if the cli matched
-// any of the given flags, false otherwise
-// For installation: it assumes that flags were added and parsed before
-// it was called.
+// New2F returns a completer that writes suggestions to 'w'
+func New2F(w io.Writer, cp CommandParser) *Complete {
+	return &Complete{
+		Command: cp.Command(),
+		Out:     w,
+		Parser:  cp,
+	}
+}
+
+// Complete determines if the user needs suggestions, and returns true if so. Programs
+// should exit when true.
+//
+// Environment variables that control our logic:
+//
+//   - COMP_LINE: prompt of the user
+//   - COMP_POINT: cursor position wher tab was pressed
+//   - COMP_INSTALL=1: install completion script into the user's shell
+//   - COMP_UNINSTALL=1: uninstall completion script from the user's shell
+//   - COMP_YES=1: don't prompt when installing or uninstall
 func (c *Complete) Complete() bool {
-	line, point, ok := getEnv()
-	if !ok {
-		// make sure flags parsed,
-		// in case they were not added in the main program
-		return c.CLI.Run()
+	// Install (or uninstall) completion into the user's shell if requested
+	doInstall := os.Getenv("COMP_INSTALL") == "1"
+	doUninstall := os.Getenv("COMP_UNINSTALL") == "1"
+	autoYes := os.Getenv("COMP_YES") == "1"
+	if doInstall || doUninstall {
+		install.Run(os.Args[0], doUninstall, autoYes, os.Stdout, os.Stdin)
+		return true
 	}
 
+	line, point, ok := getEnv()
+	if !ok {
+		return false
+	}
+
+	// TODO: Remove. Ideally, we want the full context of what the shell sent us for
+	// optimal enrichment, but we may need framework-specific logic for parsing to get
+	// there.
+	//
+	// As is, we will only pass everything up to the tab even if there's more typed on
+	// the line. (eg: cursor moved back)
 	if point >= 0 && point < len(line) {
 		line = line[:point]
 	}
 
 	Log("Completing phrase: %s", line)
-	a := newArgs(line)
+	a := args.New(line, c.Parser)
 	Log("Completing last field: %s", a.Last)
 	options := c.Command.Predict(a)
 	Log("Options: %s", options)
 
 	// filter only options that match the last argument
+	//
+	// TODO: Adjust logic so that predictors can control what is matched vs. always
+	// prefix based.
 	matches := []string{}
 	for _, option := range options {
 		if strings.HasPrefix(option, a.Last) {

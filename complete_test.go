@@ -8,11 +8,12 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/coxley/complete/internal"
 )
 
 func TestCompleter_Complete(t *testing.T) {
-	initTests()
-
+	internal.Chdir(t)
 	c := Command{
 		Sub: Commands{
 			"sub1": {
@@ -288,7 +289,7 @@ func TestCompleter_Complete(t *testing.T) {
 }
 
 func TestCompleter_Complete_SharedPrefix(t *testing.T) {
-	initTests()
+	internal.Chdir(t)
 
 	c := Command{
 		Sub: Commands{
