@@ -1,3 +1,9 @@
+// Package cmptest includes helper functions to validate tab completion
+//
+// Testing this interactively is possible, but generally tedious. Writing unittests
+// provide a much quicker feedback loop to simulate a user.
+//
+// There are examples in the godoc.
 package cmptest
 
 import (

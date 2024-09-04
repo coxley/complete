@@ -146,6 +146,24 @@ func TestBasic(t *testing.T) {
 }
 ```
 
+# Troubleshooting
+
+Running your program with `COMP_DEBUG=1` will output any logs written with
+`cmplog.Log("some msg: %v", val)`.
+
+The internal functions use this quite a bit, and you can include your own diagnostic
+messages for live troubleshooting.
+
+```
+export COMP_DEBUG=1
+
+mycli <TAB>
+complete 2024/09/04 17:19:30 Completing phrase: mycli
+complete 2024/09/04 17:19:30 Completing last field:
+complete 2024/09/04 17:19:30 Options: [one two three]
+complete 2024/09/04 17:19:30 Matches: [one two three]
+```
+
 # Fork Differences
 
 First, much thanks and credit to posener/complete. It was the first library that
