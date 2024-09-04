@@ -81,16 +81,16 @@ type Args struct {
     // Arguments in typed by the user so far, up until they pressed TAB.
     //   - At some point this will be all arguments, even if TAB was pressed in the
     //     middle of the line.
-	All []string
+    All []string
     // Same as above, excluding the one currently being typed.
-	Completed []string
+    Completed []string
     // The word currently being typed, or empty if there's a space before where 
     // TAB was pressed.
-	Last string
+    Last string
     // Last fully-typed word
-	LastCompleted string
+    LastCompleted string
     // Domain-specific value that was emitted by `args.Parser(all []string)`
-	ParsedRoot any
+    ParsedRoot any
 }
 ```
 
@@ -134,13 +134,13 @@ A basic example using `cobra` would look like:
 
 ```go
 func TestBasic(t *testing.T) {
-	cmd := &cobra.Command{
-		Use:   "count",
-		ValidArgs: []string{"one", "two", "three"},
-		CompletionOptions: cobra.CompletionOptions{
-			DisableDefaultCmd: true,
-		},
-	}
+    cmd := &cobra.Command{
+        Use:   "count",
+        ValidArgs: []string{"one", "two", "three"},
+        CompletionOptions: cobra.CompletionOptions{
+            DisableDefaultCmd: true,
+        },
+    }
 
     cmptest.Assert(t, cmpcobra.New(cmd), "count <TAB>", []string{"one", "two", "three"})
 }
