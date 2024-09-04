@@ -19,13 +19,13 @@ var (
 	PredictFiles = predict.Files
 	// Deprecated: See [predict.Set]
 	PredictSet = predict.Set
-	// Deprecated: See [predict.Func]
-	PredictFunc = predict.Func
 )
 
 type (
 	// Deprecated: See [predict.Predictor]
 	Predictor = predict.Predictor
+	// Deprecated: See [predict.Func]
+	PredictFunc = oldFunc
 	// Deprecated: See [args.Parser]
 	Parser = args.Parser
 	// Deprecated: see [args.Args]
@@ -38,3 +38,18 @@ type (
 	// Alias to [command.Flags] for import ergonomics
 	Flags = command.Flags
 )
+
+// Compatibility with posener/complete v1
+//
+// We've changed this for better godoc ordering in pkgsite
+type oldFunc func(args.Args) []string
+
+// Predict invokes the predict function and implements the Predictor interface
+func (f oldFunc) Predict(a args.Args) []string {
+	if f == nil {
+		return nil
+	}
+	return f(a)
+}
+
+var _ predict.Predictor = (oldFunc)(nil)

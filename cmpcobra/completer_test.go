@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testPredictor(t *testing.T) predict.Func {
-	return func(a args.Args) []string {
+func testPredictor(t *testing.T) predict.Predictor {
+	return predict.Func(func(a args.Args) []string {
 		root, ok := a.ParsedRoot.(*cobra.Command)
 		if !ok {
 			panic("root not valid")
@@ -19,11 +19,11 @@ func testPredictor(t *testing.T) predict.Func {
 
 		require.Equal(t, "hello", root.Flag("foo").Value.String())
 		return []string{"fuck"}
-	}
+	})
 }
 
-func testPredictor2(t *testing.T) predict.Func {
-	return func(a args.Args) []string {
+func testPredictor2(t *testing.T) predict.Predictor {
+	return predict.Func(func(a args.Args) []string {
 		root, ok := a.ParsedRoot.(*cobra.Command)
 		if !ok {
 			panic("root not valid")
@@ -31,7 +31,7 @@ func testPredictor2(t *testing.T) predict.Func {
 
 		require.Equal(t, "fuck", root.Commands()[0].Flag("bar").Value.String())
 		return []string{"fuck"}
-	}
+	})
 }
 
 func TestQuery(t *testing.T) {
