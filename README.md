@@ -73,20 +73,26 @@ If you want to jump into an example, here they are:
 # Predictors
 
 A `Predictor` is any type that implements `Predict(args.Args) []string`.
-(`predict.Func()` is provided for convenience.)
 
 `args.Args` contains a few fields:
 
-- `All`: arguments in typed by the user so far, up until they pressed TAB.
-    - At some point this will be all arguments, even if TAB was pressed in the middle
-      of the line.
-
-- `Completed`: same as above, excluding the one currently being typed.
-- `Last`: The word currently being typed, or empty if there's a space before where TAB
-   was pressed.
-
-- `LastCompleted`: last completed word
-- `ParsedRoot`: domain-specific value that was emitted by `args.Parser(all []string)`
+```go
+type Args struct {
+    // Arguments in typed by the user so far, up until they pressed TAB.
+    //   - At some point this will be all arguments, even if TAB was pressed in the
+    //     middle of the line.
+	All []string
+    // Same as above, excluding the one currently being typed.
+	Completed []string
+    // The word currently being typed, or empty if there's a space before where 
+    // TAB was pressed.
+	Last string
+    // Last fully-typed word
+	LastCompleted string
+    // Domain-specific value that was emitted by `args.Parser(all []string)`
+	ParsedRoot any
+}
+```
 
 Each `Predictor` is mapped to a flag or command to generate suggestions depending on
 where the user presses TAB. If no predictor is set for a command, it's sub-commands are
