@@ -16,15 +16,15 @@ which has went in a different direction.
 
 - Describe the skeleton of your CLI and get tab-completion for free
 - Write custom predictors to enrich suggestions using your existing business logic
-- Dynamic, contextual suggestions based on what the user has typed. 
+- Dynamic, contextual suggestions based on what the user has typed.
     - A flag may need different values depending on a positional argument's value.
-- Helpers to generate skeletons from well-known CLI frameworks. 
+- Helpers to generate skeletons from well-known CLI frameworks.
     - `cobra` is automatic
     - Seamless helpers for `flags` and `urfavecli` is planned.
 
 ## Self Completion
 
-Shells can query external binaries to get tab suggestions. 
+Shells can query external binaries to get tab suggestions.
 
 They provide a few environment variables to the program, and this package parses them.
 It notes what has been typed in the prompt, the cursor position where the user has
@@ -67,7 +67,7 @@ complete -C /path/to/mycli mycli
 If you want to jump into an example, here they are:
 
 - Runnable programs: [./examples](./examples)
-- Go examples: 
+- Go examples:
 
 
 # Predictors
@@ -84,7 +84,7 @@ type Args struct {
     All []string
     // Same as above, excluding the one currently being typed.
     Completed []string
-    // The word currently being typed, or empty if there's a space before where 
+    // The word currently being typed, or empty if there's a space before where
     // TAB was pressed.
     Last string
     // Last fully-typed word

@@ -25,7 +25,7 @@ Read `main_test.go` to see all of the outcomes.
 
 # Testing
 
-To test the completion live, build the binary and 
+To test the completion live, build the binary and
 
 
 ```

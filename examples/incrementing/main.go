@@ -6,11 +6,12 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/spf13/cobra"
+
 	"github.com/coxley/complete"
 	"github.com/coxley/complete/args"
 	"github.com/coxley/complete/cmpcobra"
 	"github.com/coxley/complete/predict"
-	"github.com/spf13/cobra"
 )
 
 func main() {

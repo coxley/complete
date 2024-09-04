@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/coxley/complete/cmplog"
 	"github.com/coxley/complete/command"
 	"github.com/coxley/complete/predict"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 var (

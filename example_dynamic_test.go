@@ -6,12 +6,13 @@ import (
 	"os"
 	"slices"
 
+	"github.com/spf13/cobra"
+
 	"github.com/coxley/complete"
 	"github.com/coxley/complete/args"
 	"github.com/coxley/complete/cmpcobra"
 	"github.com/coxley/complete/cmplog"
 	"github.com/coxley/complete/predict"
-	"github.com/spf13/cobra"
 )
 
 // These services are either "request-oriented" or "message-broker-oriented" and have

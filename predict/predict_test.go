@@ -7,9 +7,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/coxley/complete/args"
 	"github.com/coxley/complete/internal"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPredicate(t *testing.T) {

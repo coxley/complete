@@ -3,36 +3,13 @@ package cmpcobra
 import (
 	"testing"
 
+	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/require"
+
 	"github.com/coxley/complete/args"
 	"github.com/coxley/complete/cmptest"
 	"github.com/coxley/complete/predict"
-	"github.com/spf13/cobra"
-	"github.com/stretchr/testify/require"
 )
-
-func testPredictor(t *testing.T) predict.Predictor {
-	return predict.Func(func(a args.Args) []string {
-		root, ok := a.ParsedRoot.(*cobra.Command)
-		if !ok {
-			panic("root not valid")
-		}
-
-		require.Equal(t, "hello", root.Flag("foo").Value.String())
-		return []string{"fuck"}
-	})
-}
-
-func testPredictor2(t *testing.T) predict.Predictor {
-	return predict.Func(func(a args.Args) []string {
-		root, ok := a.ParsedRoot.(*cobra.Command)
-		if !ok {
-			panic("root not valid")
-		}
-
-		require.Equal(t, "fuck", root.Commands()[0].Flag("bar").Value.String())
-		return []string{"fuck"}
-	})
-}
 
 func TestQuery(t *testing.T) {
 	cmd := &cobra.Command{

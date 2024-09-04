@@ -1,11 +1,12 @@
 package complete_test
 
 import (
+	"github.com/spf13/cobra"
+
 	"github.com/coxley/complete"
 	"github.com/coxley/complete/args"
 	"github.com/coxley/complete/cmpcobra"
 	"github.com/coxley/complete/predict"
-	"github.com/spf13/cobra"
 )
 
 // Barebones tab completion for a very naive 'cp' program

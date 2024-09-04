@@ -3,14 +3,12 @@ package args
 import (
 	"fmt"
 	"strings"
-	"sync"
 	"testing"
 
-	"github.com/coxley/complete/internal"
 	"github.com/stretchr/testify/assert"
-)
 
-var once sync.Once
+	"github.com/coxley/complete/internal"
+)
 
 func TestArgs(t *testing.T) {
 	internal.Chdir(t)

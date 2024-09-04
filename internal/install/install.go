@@ -20,15 +20,19 @@ func Run(name string, uninstall, yes bool, out io.Writer, in io.Reader) {
 	if !yes {
 		fmt.Fprintf(out, "%s completion for %s? ", action, name)
 		var answer string
-		fmt.Fscanln(in, &answer)
+		if _, err := fmt.Fscanln(in, &answer); err != nil {
+			fmt.Fprintf(out, "error scanning: %v\n", err)
+			return
+		}
+
 		switch strings.ToLower(answer) {
 		case "y", "yes":
 		default:
-			fmt.Fprintf(out, "Cancelling...\n")
+			fmt.Fprint(out, "Cancelling...\n")
 			return
 		}
 	}
-	fmt.Fprintf(out, action+"ing...\n")
+	fmt.Fprint(out, action+"ing...\n")
 
 	var err error
 	if uninstall {
