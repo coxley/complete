@@ -10,7 +10,7 @@ self-completing Go programs. This is a program that doesn't need to distribute, 
 maintain, any complex bash/zsh/fish script alongside their normal CLI.
 
 It was originally forked from [posener/complete](https://github.com/posener/complete),
-which has went in a different direction.
+which has went in a different direction. See ["Motivation for Forking](#Motivation-for-Forking)".
 
 ## Features
 
@@ -67,7 +67,7 @@ complete -C /path/to/mycli mycli
 If you want to jump into an example, here they are:
 
 - Runnable programs: [./examples](./examples)
-- Go examples:
+- Godoc examples: [pkgsite](https://pkg.go.dev/github.com/coxley/complete#pkg-examples)
 
 
 # Predictors
@@ -164,7 +164,7 @@ complete 2024/09/04 17:19:30 Options: [one two three]
 complete 2024/09/04 17:19:30 Matches: [one two three]
 ```
 
-# Fork Differences
+# Motivation for Forking
 
 First, much thanks and credit to posener/complete. It was the first library that
 demonstrated self-completion to me many years ago.
