@@ -146,6 +146,8 @@ func cmdPredictor(cmd *cobra.Command) predict.Predictor {
 
 // createCompletion walks the Cobra command structure to suggest predictions
 func (c *Completer) createCompletion(cmd *cobra.Command) command.Command {
+	// TODO: The way this currently works, predicting both the root-command's
+	// positional args AND sub-commands is wonky. Will need to revisit for polish.
 	cmp := command.Command{
 		Sub:  command.Commands{},
 		Args: cmdPredictor(cmd),

@@ -14,9 +14,11 @@ import (
 	"github.com/coxley/complete/cmplog"
 )
 
-// CachedDir is the parent directory under the user cache dir that cached suggestions
-// will be stored
-const CachedDir = "tab_complete"
+const (
+	// CachedDir is the parent directory under the user cache dir that cached suggestions
+	// will be stored
+	CachedDir = "tab_complete"
+)
 
 // Allow overriding for tests, but defaults to the operating system's preferred
 // location.
@@ -38,12 +40,12 @@ var UserCacheDir = func() (string, error) {
 //
 // Where 'cmd' is os.Args[0] and 'name' is provided to this function. [CachedDir] can
 // be written to customize the containing directory.
-func Cached(name string, ttl time.Duration, fill func() []string) Predictor {
+func Cached(name string, ttl time.Duration, load func() []string) Predictor {
 	return &cachePredictor{
 		scope: os.Args[0],
 		name:  name,
 		ttl:   ttl,
-		load:  fill,
+		load:  load,
 	}
 }
 
@@ -52,25 +54,25 @@ func Cached(name string, ttl time.Duration, fill func() []string) Predictor {
 //
 // This is useful if you have multiple command-line programs that want to share
 // tab-complete suggestions without duplicating the results.
-func ScopedCache(scope string, name string, ttl time.Duration, fill func() []string) Predictor {
+func ScopedCache(scope string, name string, ttl time.Duration, load func() []string) Predictor {
 	return &cachePredictor{
 		scope: scope,
 		name:  name,
 		ttl:   ttl,
-		load:  fill,
+		load:  load,
 	}
 }
 
 type cachedEntry struct {
+	lastUpdate time.Time
 	file       *os.File
 	values     []string
-	lastUpdate time.Time
 }
 type cachePredictor struct {
+	load  func() []string
 	scope string
 	name  string
 	ttl   time.Duration
-	load  func() []string
 }
 
 func (p *cachePredictor) loadCache() (*cachedEntry, error) {
@@ -116,7 +118,7 @@ func (p *cachePredictor) refresh(f *os.File) ([]string, error) {
 	// prevent intermittent issue wiping what we have.
 	values := p.load()
 	if len(values) == 0 {
-		cmplog.Log("pred %s:%s returned no results", p.scope, p.name)
+		cmplog.Log("cached pred %s:%s returned no results", p.scope, p.name)
 		return nil, nil
 	}
 
@@ -139,7 +141,7 @@ func (p *cachePredictor) refresh(f *os.File) ([]string, error) {
 func (p *cachePredictor) Predict(args args.Args) []string {
 	entry, err := p.loadCache()
 	if err != nil {
-		cmplog.Log("pred %s:%s failed to load cache: %v", p.scope, p.name, err)
+		cmplog.Log("cached pred %s:%s failed to load cache: %v", p.scope, p.name, err)
 		return nil
 	}
 
@@ -149,7 +151,7 @@ func (p *cachePredictor) Predict(args args.Args) []string {
 	if time.Since(entry.lastUpdate) > p.ttl {
 		values, err = p.refresh(entry.file)
 		if err != nil {
-			cmplog.Log("pred %s:%s failed to refresh cache: %v", p.scope, p.name, err)
+			cmplog.Log("cached pred %s:%s failed to refresh: %v", p.scope, p.name, err)
 			return values
 		}
 	}
