@@ -47,6 +47,19 @@ func TestQuery(t *testing.T) {
 	cmptest.Assert(t, New(cmd), "query -c <TAB> -c colX table2", []string{})
 }
 
+func TestPersistentRegister(t *testing.T) {
+	root := &cobra.Command{
+		Use: "root",
+	}
+	root.PersistentFlags().String("env", "", "")
+	pred := predict.Func(func(args args.Args) []string {
+		return []string{"foo"}
+	})
+	RegisterFlag(root, "env", pred)
+
+	cmptest.Assert(t, New(root), "root --env <TAB>", []string{"foo"})
+}
+
 func TestPersistent(t *testing.T) {
 	// Test that the child command can get access to persistent flags without looking
 	// at the root

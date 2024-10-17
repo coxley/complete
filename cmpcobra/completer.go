@@ -1,6 +1,7 @@
 package cmpcobra
 
 import (
+	"cmp"
 	"fmt"
 	"strings"
 
@@ -26,7 +27,10 @@ var (
 // command "factories" to share that value around. The registered values are unique
 // pointers so overwriting won't happen.
 func RegisterFlag(cmd *cobra.Command, name string, predictor predict.Predictor) {
-	flag := cmd.Flags().Lookup(name)
+	local := cmd.Flags().Lookup(name)
+	persistent := cmd.PersistentFlags().Lookup(name)
+
+	flag := cmp.Or(local, persistent)
 	if flag == nil {
 		panic(fmt.Sprintf("flag %q doesn't exist on %q", name, cmd.Name()))
 	}
