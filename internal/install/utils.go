@@ -9,7 +9,8 @@ import (
 )
 
 func lineInFile(path string, line string) bool {
-	return script.Cat(path).Grep(regexp.MustCompile("^"+line+"$")).Wc().Lines > 0
+	re := regexp.MustCompile("^" + regexp.QuoteMeta(line) + "$")
+	return script.Cat(path).Grep(re).Wc().Lines > 0
 }
 
 func createFile(path string, content string) error {
@@ -27,7 +28,7 @@ func removeFromFile(path string, line string) error {
 		return fmt.Errorf("creating backup file: %s", err)
 	}
 
-	tmp, err := script.Cat(path).Modify(script.Grep{Re: regexp.MustCompile("^" + line + "$"), Inverse: true}).ToTempFile()
+	tmp, err := script.Cat(path).Modify(script.Grep{Re: regexp.MustCompile("^" + regexp.QuoteMeta(line) + "$"), Inverse: true}).ToTempFile()
 	if err != nil {
 		return fmt.Errorf("failed remove: %s", err)
 	}
